@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #turntable {
+            width: 500px;
+            height: 500px;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="turntable" width="500px" height="500px"></canvas>
+    <script>
+        /** @type {HTMLCanvasElement} */
+        const canvas = document.querySelector("#turntable");
+        var ctx = canvas.getContext("2d");
+        function drawCircle(blockNum) {
+            ctx.translate(200, 200);
+
+            ctx.rotate(10 * Math.PI / 180)
+            drawSector(blockNum);
+            setInterval(function () {
+                clearSector(blockNum);
+                ctx.rotate(5 * Math.PI / 180);
+                drawSector(blockNum);
+            }, 50)
+        }
+        function clearSector(blockNum) {
+            ctx.clearRect(-100,-100,200,200);
+        }
+        function drawSector(blockNum) {
+            var angelpercent = 2 * Math.PI / blockNum;
+            var start = 0;
+            for (let i = 0; i < blockNum; i++) {
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.arc(0, 0, 100, start, start + angelpercent);
+                start = start + angelpercent;
+                ctx.closePath();
+                ctx.stroke();
+            }
+        }
+        drawCircle(6);
+
+    </script>
+</body>
+
+</html>
