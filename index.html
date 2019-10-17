@@ -16,7 +16,7 @@
 
 <body>
     <canvas id="turntable" width="500px" height="500px"></canvas>
-    <button onclick="start">抽奖</button>
+    <button onclick="start()">抽奖</button>
     <script>
         /** @type {HTMLCanvasElement} */
         const canvas = document.querySelector("#turntable");
@@ -29,29 +29,38 @@
         { "name": "衣服" },
         { "name": "红包" },
         { "name": "鞋包" }]
+        //current time,init value,change value,duration
+        function easeout(currentTime, startValue, changeValue, duration) {
+            currentTime /= duration;
+            return -changeValue * currentTime * (currentTime - 2) + startValue;
+        }
         function start() {
             var res = 0;
             var remain = 720 * Math.PI / 180;
-            var per = 10 * Math.PI /180;
-            (function drawFrame() {
-                window.requestAnimationFrame(drawFrame,canvas);
-                var spinningTime = 0;
-                var spinTotalTime = 10;
-            })()
+            var per = 10 * Math.PI / 180;
+            var begin = new Date().getTime();
+            var time = 5000;
+            var curAngle = 0;
+            function drawFrame() {
+                curAngle = easeout(new Date().getTime() - begin, 0, 720 * Math.PI / 180, time);
+                console.log(curAngle);
+                if (new Date().getTime() - begin < time) {
+                    window.requestAnimationFrame(drawFrame);
+                }
+                drawSector(data.length, 200, curAngle);
+            }
+            window.requestAnimationFrame(drawFrame);
         }
-        function drawCircle(blockNum, radius) {
+        function drawCircle(blockNum, radius, rotateAngle) {
             ctx.translate(100 + radius, 100 + radius);
-            drawSector(blockNum, radius);
-            // setInterval(function () {
-            //     clearSector(radius);
-            //     ctx.rotate(5 * Math.PI / 180);
-            //     drawSector(blockNum,radius);
-            // }, 50)
+            drawSector(blockNum, radius, 0);
         }
         function clearSector(radius) {
             ctx.clearRect(-radius, -radius, radius * 2, radius * 2);
         }
-        function drawSector(blockNum, radius) {
+        function drawSector(blockNum, radius, rotateAngle) {
+            clearSector(radius);
+            ctx.rotate(rotateAngle * Math.PI / 180);
             var angelpercent = 2 * Math.PI / blockNum;
             var start = 0;
             for (let i = 0; i < blockNum; i++) {
@@ -67,7 +76,6 @@
         function drawText(text, start, angel, radius, fontSize) {
             var length = text.length;
             var perAngel = angel / (length + 2);
-            console.log(length)
             var begin = start + perAngel;
             ctx.font = `${fontSize}px 微软雅黑`;
             ctx.textAlign = "center";
@@ -83,17 +91,7 @@
                 begin += perAngel;
             }
         }
-        // function drawText(text, start, angel, radius) {
-        //     var cur = (start + start + angel) / 2;
-        //     ctx.save()
-        //     ctx.textAlign = "center";
-        //     ctx.font = "14px 微软雅黑"
-        //     ctx.translate(Math.cos(cur) * radius * 0.7, Math.sin(cur) * radius * 0.7)
-        //     ctx.rotate(Math.PI / 2 + cur);
-        //     ctx.fillText(text, 0, 0)
-        //     ctx.restore();
-        // }
-        drawCircle(data.length, 200);
+        drawCircle(data.length, 200, 0);
 
     </script>
 </body>
