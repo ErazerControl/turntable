@@ -65,7 +65,7 @@
             drawSector(blockNum, radius, 0);
         }
         function clearSector(radius) {
-            ctx.clearRect(-radius, -radius, radius * 2, radius * 2);
+            ctx.clearRect(-radius-2, -radius-2, radius * 2 +2, radius * 2 +2);
         }
         function drawSector(blockNum, radius, rotateAngle) {
             clearSector(radius);
@@ -83,6 +83,14 @@
                 ctx.stroke();
             }
             ctx.restore();
+            ctx.beginPath();
+            ctx.moveTo(-10, 0)
+            ctx.lineTo(0, -50)
+            ctx.lineTo(10, 0)
+            ctx.save();
+            ctx.fillStyle = "red";
+            ctx.restore();
+            ctx.fill();
         }
         function drawText(text, start, angel, radius, fontSize) {
             var length = text.length;
