@@ -34,21 +34,30 @@
             currentTime /= duration;
             return -changeValue * currentTime * (currentTime - 2) + startValue;
         }
+        function easeInOut(currentTime, startValue, changeValue, duration) {
+            currentTime /= duration / 2;
+            if (currentTime < 1) return changeValue / 2 * currentTime * currentTime + startValue;
+            currentTime--;
+            return -changeValue / 2 * (currentTime * (currentTime - 2) - 1) + startValue;
+        }
         function start() {
-            var res = 0;
+            var res = Math.floor(Math.random() * Math.floor(data.length));
             var remain = 720 * Math.PI / 180;
             var per = 10 * Math.PI / 180;
-            var begin = new Date().getTime();
-            var time = 5000;
+            var time = 3000;
             var curAngle = 0;
+            var targetAngel = 360 * 3 * Math.PI / 180 + 60 * (4 - res) * Math.PI / 180;
             function drawFrame() {
-                curAngle = easeout(new Date().getTime() - begin, 0, 720 * Math.PI / 180, time);
-                console.log(curAngle);
+                var curTime = new Date().getTime() - begin;
+
+                curAngle = easeInOut(curTime, 0, targetAngel, time);
+                console.log(curTime, curAngle);
                 if (new Date().getTime() - begin < time) {
                     window.requestAnimationFrame(drawFrame);
                 }
                 drawSector(data.length, 200, curAngle);
             }
+            var begin = new Date().getTime();
             window.requestAnimationFrame(drawFrame);
         }
         function drawCircle(blockNum, radius, rotateAngle) {
@@ -60,7 +69,8 @@
         }
         function drawSector(blockNum, radius, rotateAngle) {
             clearSector(radius);
-            ctx.rotate(rotateAngle * Math.PI / 180);
+            ctx.save();
+            ctx.rotate(rotateAngle);
             var angelpercent = 2 * Math.PI / blockNum;
             var start = 0;
             for (let i = 0; i < blockNum; i++) {
@@ -72,6 +82,7 @@
                 ctx.closePath();
                 ctx.stroke();
             }
+            ctx.restore();
         }
         function drawText(text, start, angel, radius, fontSize) {
             var length = text.length;
